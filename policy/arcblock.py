@@ -27,9 +27,7 @@ class Arc_block_Cache(Policy):
         self.hdd_tier = hdd_tier
         self.evicted_file_count = 0
         self.migration_times = 0  # Liste pour stocker les temps de migration
-        self.hits_in_hdd_b1_b2 = 0  # Nouvelle métrique pour suivre les hits dans b1 et b2
-        #self.ssd_cache = deque(maxlen=cache_size)
-        #self.hdd_cache = deque(maxlen=cache_size)
+        self.hits_in_hdd_b1_b2 = 0  
         self.read_times = 0
         self.write_times = 0
         self.total_time = 0
@@ -103,7 +101,7 @@ class Arc_block_Cache(Policy):
         io_blocks = {(file, offsetStart + i) for i in range(offsetEnd - offsetStart)}
         all_blocks_in_cache = all(
             block in self.t1 or block in self.t2 for block in io_blocks)
-        #print(file, timestamp, requestType, offsetStart, offsetEnd)
+        
         # Count hits and misses for this I/O
         if all_blocks_in_cache:
             self.hits += 1
@@ -111,14 +109,6 @@ class Arc_block_Cache(Policy):
             self.misses += 1
         for block_offset in range(offsetStart, offsetEnd):
             args = (file, block_offset)
-            #
-            # if args in self.t1 or args in self.t2:
-            #     hits = True
-            #     self.hit_block += 1
-            # else:
-            #     # Si le bloc n'est pas dans t1 ou t2, c'est un 'miss'
-            #     hits = False
-            #     self.mis_block += 1
 
             if args in self.t1:
                 self.t1.remove(args)
@@ -138,8 +128,7 @@ class Arc_block_Cache(Policy):
                 self.ssd_tier.add_block(*args)
 
                 self.hdd_tier.remove_block(*args)
-                #self.hdd_tier.remove(args)
-                #self.ssd_cache.appendleft(args)
+
                 hdd_read_time = (self.block_size / self.hdd_tier.read_throughput)
                 ssd_write_time = (self.block_size / self.ssd_tier.write_throughput)
                 # Calculer le temps nécessaire pour écrire le fichier sur le SSD
@@ -163,8 +152,7 @@ class Arc_block_Cache(Policy):
                 self.ssd_tier.add_block(*args)
 
                 self.hdd_tier.remove_block(*args)
-                #self.hdd_tier.remove(args)
-                #self.ssd_cache.appendleft(args)
+
                 hdd_read_time = (self.block_size / self.hdd_tier.read_throughput)
                 # Calculer le temps nécessaire pour écrire le fichier sur le SSD
                 ssd_write_time = (self.block_size / self.ssd_tier.write_throughput)
@@ -187,25 +175,7 @@ class Arc_block_Cache(Policy):
                     else:
                         t1pop = self.t1.pop()
                         self.ssd_tier.remove_block(*t1pop)
-                        #self.ssd_tier.remove(t1pop)
-                        #self.evicted_blocks_count += 1
-                        # data_size_to_transfer = self.block_size
-                        #
-                        # # Calculer le temps nécessaire pour lire le fichier depuis le HDD
-                        # ssd_read_time = data_size_to_transfer / self.ssd_tier.read_throughput
-                        #
-                        # # Calculer le temps nécessaire pour écrire le fichier sur le SSD
-                        # hdd_write_time = data_size_to_transfer / self.hdd_tier.write_throughput
-                        #
-                        # # Si les opérations de lecture et d'écriture sont en parallèle,
-                        # # prendre le maximum des deux temps
-                        # max_transfer_time = max(ssd_read_time, hdd_write_time)
-                        #
-                        # # Additionner le temps de transfert maximum et les latences des deux tiers
-                        # total_eviction_time = max_transfer_time + self.ssd_tier.latency + self.hdd_tier.latency
-                        #
-                        # # Mettre à jour le temps total de préchargement
-                        # self.migration_times += total_eviction_time
+
                 else:
                     total = len(self.t1) + len(self.b1) + len(self.t2) + len(self.b2)
                     if total >= self.c:
@@ -234,18 +204,11 @@ class Arc_block_Cache(Policy):
                 else:
                     self.ssd_tier.add_block(*args)
                     self.write_times += (self.block_size / self.ssd_tier.write_throughput)  # lat read
-        # self.hits += hits
-        # self.misses += not hits
+
         self.total_time = (self.migration_times + self.prefetch_times + self.read_times + self.write_times)
         #print("total time in arcblock", self.total_time)
         print('nbr hit arc block %s', self.hits)
         print('nbr miss arc block %s', self.misses)
-        #print('nbr hitblock v1 %s', self.hit_block)
-        #print('nbr missblock v1 %s', self.mis_block)
-        #print('nombre de blocks evincés ', self.evicted_blocks_count)
-        #print('size of t1 and t2', len(self.t1) + len(self.t2))
-        #print('size of b1 and b2', len(self.b1) + len(self.b2))
-        #print('nbr hit v1 %s', self.hits)
-        #print('nbr miss v1 %s', self.misses)
+
 
 
