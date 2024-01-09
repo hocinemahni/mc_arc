@@ -1,0 +1,13 @@
+Metadata File: data3/IBMObjectStoreTrace000Part0_metadata.csv
+Cache Size: 1532235
+Hits: 24.076320004823977
+Misses: 780645
+Total Execution Time: 317740.83820604783
+Total Eviction Time: 0.010108138020833334
+Total Prefetch Time: 163034.13316007584
+Total Read Time: 4.02066412496056
+Total Write Time: 2711.585597631001
+
+nombre de fichiers évincés  14964444
+nombre de blocks evincés  208946192
+v2 evict 0.1
