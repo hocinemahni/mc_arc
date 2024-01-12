@@ -1,7 +1,7 @@
 import csv
 
 # Chemin vers votre fichier CSV
-file_path = 'data3/IBMObjectStoreTrace002Part0_request.csv'
+file_path = 'data3/IBMObjectStoreTrace007Part0_request.csv'
 
 # Initialisation de la variable pour stocker la somme totale
 total_size = 0
