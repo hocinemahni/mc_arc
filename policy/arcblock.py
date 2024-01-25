@@ -175,8 +175,8 @@ class Arc_block_Cache(Policy):
                 max_transfer_time = max(hdd_read_time, ssd_write_time)
 
                 # Additionner le temps de transfert maximum et les latences des deux tiers
-                #total_prefetch_time = (max_transfer_time + self.ssd_tier.latency + self.hdd_tier.latency)
-                total_prefetch_time = max_transfer_time
+                total_prefetch_time = (max_transfer_time)
+                #total_prefetch_time = max_transfer_time
                 # Mettre à jour le temps total de préchargement
                 self.prefetch_times += total_prefetch_time
                 self.hits_in_hdd_b1_b2 += 1
@@ -219,11 +219,12 @@ class Arc_block_Cache(Policy):
                             self.b2.pop()
                         self.replace(args)
 
-                self.t1.appendleft(args)
+
                 if self.hdd_tier.is_block_in_file(*args):
                     self.hdd_tier.remove_block(*args)
                     self.ssd_tier.add_block(*args)
-                    self.hdd_time += (self.block_size / self.hdd_tier.read_throughput) #+ self.hdd_tier.latency
+                    self.t1.appendleft(args)
+                    #self.hdd_time += (self.block_size / self.hdd_tier.read_throughput)
                     hdd_read_time = (self.block_size / self.hdd_tier.read_throughput)
                     ssd_write_time = (self.block_size / self.ssd_tier.write_throughput)
                     # Calculer le temps nécessaire pour écrire le fichier sur le SSD
@@ -233,7 +234,7 @@ class Arc_block_Cache(Policy):
                     max_transfer_time = max(hdd_read_time, ssd_write_time)
 
                     # Additionner le temps de transfert maximum et les latences des deux tiers
-                    total_prefetch_time = (max_transfer_time + self.ssd_tier.latency + self.hdd_tier.latency)
+                    total_prefetch_time = (max_transfer_time )
 
                     # Mettre à jour le temps total de préchargement
                     self.prefetch_times += total_prefetch_time
@@ -244,7 +245,9 @@ class Arc_block_Cache(Policy):
                         #self.write_times += ((self.block_size) / self.hdd_tier.write_throughput)
                         self.hdd_time += (self.block_size / self.hdd_tier.read_throughput) + self.hdd_tier.latency
                     else:
+                        self.t1.appendleft(args)
                         self.ssd_tier.add_block(*args)
+
                         self.ssd_time += (self.block_size / self.ssd_tier.write_throughput) + self.ssd_tier.latency
         self.total_time = self.ssd_time + self.hdd_time + self.prefetch_times + self.migration_times
         print('nbr hit arc block %s', self.hits)
