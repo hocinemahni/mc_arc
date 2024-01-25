@@ -1,6 +1,6 @@
 import csv
 
-# Chemin vers votre fichier CSV
+# Chemin vers le fichier  CSV
 file_path = 'data3/IBMObjectStoreTrace007Part0_request.csv'
 
 # Initialisation de la variable pour stocker la somme totale
