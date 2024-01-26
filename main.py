@@ -191,8 +191,8 @@ if __name__ == "__main__":
 
     block_size = 1024
     alpha = 1.00
-    #cache_size_proportion = [0.1, 0.5, 1, 5]
-    cache_size_proportion = [20]
+    cache_size_proportion = [0.1, 0.5, 1, 5]
+    #cache_size_proportion = [20]
     files_dict = {}
     metadata_filename = "data3/IBMObjectStoreTrace000Part0_metadata.csv"
     with open(metadata_filename, 'r', encoding='utf-8') as f:
@@ -205,8 +205,8 @@ if __name__ == "__main__":
             lastAccessTime = (row[3])
             lifetime = float(row[4])
             files_dict[filename] = File(filename,  max(1, math.ceil(size / block_size)), firstAccessTime, lastAccessTime, lifetime)
-    #ios = list(read_io_requests("data3/IBMObjectStoreTrace010Part0_request.csv"))
-    ios = list(read_io_requests1("data3/IBMObjectStoreTrace000Part0_request.csv", 1000))
+    ios = list(read_io_requests("data3/IBMObjectStoreTrace000Part0_request.csv"))
+    #ios = list(read_io_requests1("data3/IBMObjectStoreTrace000Part0_request.csv", 1000))
     IO_count = len(ios)
     i = 10
     for proportion in cache_size_proportion:
