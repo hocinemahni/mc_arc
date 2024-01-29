@@ -42,9 +42,11 @@ class LRU(Policy):
         # Charge un fichier dans le cache, en évinçant d'autres fichiers si nécessaire
         if file.size + self.total_size_in_cache() <= self.cache_size:
             self.cache[file] = None
+            self.ssd_tier.add_file(file)
         else:
             self.evict()
             self.cache[file] = None
+            self.ssd_tier.add_file(file)
 
     def on_io(self, file, timestamp, requestType, offsetStart, offsetEnd):
   
@@ -73,9 +75,10 @@ class LRU(Policy):
         else:
             # Si le fichier est déjà dans le cache, tous les blocs demandés sont des hits
             hits = offsetEnd - offsetStart
+            self.ssd_time += ((( offsetEnd - offsetStart)* self.block_size) / self.ssd_tier.read_throughput) + self.ssd_tier.latency
             # Marquer le fichier comme récemment utilisé
             self.cache.move_to_end(file)
-
+            
 
         return hits, misses
 
