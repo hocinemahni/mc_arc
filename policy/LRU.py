@@ -50,6 +50,7 @@ class LRU(Policy):
         if file.size + self.total_size_in_cache() <= self.cache_size:
             self.cache[file] = None
             self.ssd_tier.add_file(file)
+            
         else:
             self.evict()
             self.cache[file] = None
@@ -61,6 +62,7 @@ class LRU(Policy):
         if file not in self.cache:
             # Si le fichier n'est pas dans le cache            
             self.misses = offsetEnd - offsetStart
+            
             if self.hdd_tier.is_file_in_tier(file.name):
                self.hdd_tier.remove_file(file.name)
                self.ssd_tier.add_file(file)
@@ -72,13 +74,16 @@ class LRU(Policy):
                ssd_write_time = ((file.size * self.block_size) / self.ssd_tier.write_throughput) + self.ssd_tier.latency               
                # prendre le maximum des deux temps
                self.prefetch_times += max(hdd_read_time, ssd_write_time)
+               
             elif file.size < self.cache_size:
                self.load_file_to_cache(file)
                self.ssd_tier.add_file(file)
                self.ssd_time += ((file.size * self.block_size) / self.ssd_tier.write_throughput) + self.ssd_tier.latency
+               
             else: 
                 self.hdd_tier.add_file(file)
-                self.hdd_time += ((file.size * self.block_size) / self.hdd_tier.write_throughput) + self.hdd_tier.latency             
+                self.hdd_time += ((file.size * self.block_size) / self.hdd_tier.write_throughput) + self.hdd_tier.latency 
+                
         else:
             # Si le fichier est déjà dans le cache, tous les blocs demandés sont des hits
             self.hits = offsetEnd - offsetStart
