@@ -28,6 +28,13 @@ class LRU(Policy):
         while self.cache_size < self.total_size_in_cache():
             _, file_to_evict = self.cache.popitem(last=False)
             self.remove_all(file_to_evict)
+            self.evicted_blocks_count += file_to_evict[0].size
+            # Calculer la taille des données à transférer en octets
+            data_size_to_transfer = (file_to_evict[0].size * self.block_size)
+            # Calculer le temps de migration
+            ssd_read_time = (data_size_to_transfer / self.ssd_tier.read_throughput) + self.ssd_tier.latency
+            hdd_read_time = (data_size_to_transfer / self.hdd_tier.write_throughput) + self.hdd_tier.latency
+            self.migration_times += max(ssd_read_time, hdd_read_time)
 
     def remove_all(self, file: File):
         # Supprime un fichier et tous ses blocs du cache
@@ -53,7 +60,7 @@ class LRU(Policy):
 
         if file not in self.cache:
             # Si le fichier n'est pas dans le cache            
-            misses = offsetEnd - offsetStart
+            self.misses = offsetEnd - offsetStart
             if self.hdd_tier.is_file_in_tier(file.name):
                self.hdd_tier.remove_file(file.name)
                self.ssd_tier.add_file(file)
@@ -74,12 +81,14 @@ class LRU(Policy):
                 self.hdd_time += ((file.size * self.block_size) / self.hdd_tier.write_throughput) + self.hdd_tier.latency             
         else:
             # Si le fichier est déjà dans le cache, tous les blocs demandés sont des hits
-            hits = offsetEnd - offsetStart
+            self.hits = offsetEnd - offsetStart
             self.ssd_time += ((( offsetEnd - offsetStart)* self.block_size) / self.ssd_tier.read_throughput) + self.ssd_tier.latency
             # Marquer le fichier comme récemment utilisé
             self.cache.move_to_end(file)
             
-
+        self.total_time += self.ssd_time + self.hdd_time + self.migration_times + self.prefetch_times
+        print('nbr hit', self.hits)
+        print('nbr miss', self.misses)
         
 
 
