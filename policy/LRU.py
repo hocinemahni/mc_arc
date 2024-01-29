@@ -80,6 +80,6 @@ class LRU(Policy):
             self.cache.move_to_end(file)
             
 
-        return hits, misses
+        
 
 
