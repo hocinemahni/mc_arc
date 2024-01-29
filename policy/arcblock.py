@@ -21,6 +21,7 @@ class Arc_block_Cache(Policy):
         self.hits = 0  # Counter for cache hits
         self.misses = 0  # Counter for cache misses
         self.evicted_blocks_count = 0  # Counter for evicted blocks
+        self.migrated_blocks_count = 0
         self.ssd_tier = ssd_tier
         self.hdd_tier = hdd_tier
         self.evicted_file_count = 0
@@ -58,31 +59,16 @@ class Arc_block_Cache(Policy):
             # Calculer la taille des données à transférer en octets (exemple)
             data_size_to_transfer = self.block_size
             # Calculer le temps de migration
-            # Calculer le temps nécessaire pour lire le fichier depuis le HDD
-            #ssd_read_time = (data_size_to_transfer / self.ssd_tier.read_throughput)
-            #self.ssd_time_evict += (data_size_to_transfer / self.ssd_tier.read_throughput) #+ self.ssd_tier.latency
-            #self.hdd_time_evict += (data_size_to_transfer / self.hdd_tier.write_throughput) #+ self.hdd_tier.latency
-            # Calculer le temps nécessaire pour écrire le fichier sur le SSD
-            #hdd_write_time = (data_size_to_transfer / self.hdd_tier.write_throughput)
 
-            # Si les opérations de lecture et d'écriture sont en parallèle,
-            # prendre le maximum des deux temps
-            #max_transfer_time = max(ssd_read_time, hdd_write_time)
             # Calculer le temps nécessaire pour lire le fichier depuis le HDD
-            ssd_read_time = (data_size_to_transfer / self.ssd_tier.read_throughput)
+            ssd_read_time = (data_size_to_transfer / self.ssd_tier.read_throughput) + self.ssd_tier.latency
             # Calculer le temps nécessaire pour écrire le fichier sur le SSD
-            hdd_write_time = (data_size_to_transfer / self.hdd_tier.write_throughput)
-            # self.ssd_time_evict += (data_size_to_transfer / self.ssd_tier.read_throughput) + self.ssd_tier.latency
-            # self.hdd_time_evict += (data_size_to_transfer / self.hdd_tier.write_throughput) + self.hdd_tier.latency
-            # Si les opérations de lecture et d'écriture sont en parallèle,
+            hdd_write_time = (data_size_to_transfer / self.hdd_tier.write_throughput) + self.hdd_tier.latency
+
             # prendre le maximum des deux temps
             max_transfer_time = max(ssd_read_time, hdd_write_time)
 
-            # Additionner le temps de transfert maximum et les latences des deux tiers
-            # self.migration_times += (max_transfer_time + self.ssd_tier.latency + self.hdd_tier.latency)
             self.migration_times += max_transfer_time
-            # Additionner le temps de transfert maximum et les latences des deux tiers
-            #self.migration_times += (max_transfer_time + self.ssd_tier.latency + self.hdd_tier.latency)
             self.evicted_blocks_count += 1
             # Mettre à jour le tuple dans b1 avec l'information complète du fichier
         else:
@@ -95,17 +81,11 @@ class Arc_block_Cache(Policy):
             data_size_to_transfer = self.block_size
             # Calculer le temps de migration
             # Calculer le temps nécessaire pour lire le fichier depuis le HDD
-            ssd_read_time = (data_size_to_transfer / self.ssd_tier.read_throughput)
+            ssd_read_time = (data_size_to_transfer / self.ssd_tier.read_throughput) + self.ssd_tier.latency
             # Calculer le temps nécessaire pour écrire le fichier sur le SSD
-            hdd_write_time = (data_size_to_transfer / self.hdd_tier.write_throughput)
-            #self.ssd_time_evict += (data_size_to_transfer / self.ssd_tier.read_throughput) + self.ssd_tier.latency
-            #self.hdd_time_evict += (data_size_to_transfer / self.hdd_tier.write_throughput) + self.hdd_tier.latency
-            # Si les opérations de lecture et d'écriture sont en parallèle,
+            hdd_write_time = (data_size_to_transfer / self.hdd_tier.write_throughput) + self.hdd_tier.latency
             # prendre le maximum des deux temps
             max_transfer_time = max(ssd_read_time, hdd_write_time)
-
-            # Additionner le temps de transfert maximum et les latences des deux tiers
-            #self.migration_times += (max_transfer_time + self.ssd_tier.latency + self.hdd_tier.latency)
             self.migration_times += max_transfer_time
     def on_io(self, file, timestamp, requestType, offsetStart, offsetEnd):
         # Simulate I/O operation and update cache
@@ -116,39 +96,37 @@ class Arc_block_Cache(Policy):
         self.ssd_time_evict = 0
         self.hdd_time_evict = 0
         self.hdd_time_pref = 0
-
+        self.migration_times = 0
+        self.prefetch_times = 0
         for block_offset in range(offsetStart, offsetEnd):
             args = (file, block_offset)
             #
             if args in self.t1 or args in self.t2:
-                #hits = True
                 self.hits += 1
             else:
                 # Si le bloc n'est pas dans t1 ou t2, c'est un 'miss'
-                #hits = False
+
                 self.misses += 1
 
             if args in self.t1:
                 self.t1.remove(args)
                 self.t2.appendleft(args)
-                self.ssd_time += (self.block_size / self.ssd_tier.read_throughput)
+                self.ssd_time += (self.block_size / self.ssd_tier.read_throughput) + self.ssd_tier.latency
             elif args in self.t2:
                 self.t2.remove(args)
                 self.t2.appendleft(args)
-                self.ssd_time += (self.block_size / self.ssd_tier.read_throughput)
+                self.ssd_time += (self.block_size / self.ssd_tier.read_throughput) + self.ssd_tier.latency
             elif args in self.b1:
                 self.p = min(self.c, self.p + max(round(len(self.b2) / len(self.b1)), 1))
                 self.replace(args)
                 self.b1.remove(args)
                 self.t2.appendleft(args)
                 self.ssd_tier.add_block(*args)
-                #self.hdd_time_pref += (self.block_size / self.hdd_tier.read_throughput) #+ self.hdd_tier.latency
+                self.migrated_blocks_count += 1
                 self.hdd_tier.remove_block(*args)
-                hdd_read_time = (self.block_size / self.hdd_tier.read_throughput)
-                ssd_write_time = (self.block_size / self.ssd_tier.write_throughput)
+                hdd_read_time = (self.block_size / self.hdd_tier.read_throughput) + self.hdd_tier.latency
+                ssd_write_time = (self.block_size / self.ssd_tier.write_throughput) + self.ssd_tier.latency
                 # Calculer le temps nécessaire pour écrire le fichier sur le SSD
-
-                # Si les opérations de lecture et d'écriture sont en parallèle,
                 # prendre le maximum des deux temps
                 max_transfer_time = max(hdd_read_time, ssd_write_time)
 
@@ -167,20 +145,19 @@ class Arc_block_Cache(Policy):
                 self.ssd_tier.add_block(*args)
                 self.hdd_time_pref += (self.block_size / self.hdd_tier.read_throughput) #+ self.hdd_tier.latency
                 self.hdd_tier.remove_block(*args)
-                hdd_read_time = (self.block_size / self.hdd_tier.read_throughput)
+                hdd_read_time = (self.block_size / self.hdd_tier.read_throughput) + self.hdd_tier.latency
                 # Calculer le temps nécessaire pour écrire le fichier sur le SSD
-                ssd_write_time = (self.block_size / self.ssd_tier.write_throughput)
+                ssd_write_time = (self.block_size / self.ssd_tier.write_throughput) + self.ssd_tier.latency
                 # Si les opérations de lecture et d'écriture sont en parallèle,
                 # prendre le maximum des deux temps
                 max_transfer_time = max(hdd_read_time, ssd_write_time)
 
                 # Additionner le temps de transfert maximum et les latences des deux tiers
                 total_prefetch_time = (max_transfer_time)
-                #total_prefetch_time = max_transfer_time
                 # Mettre à jour le temps total de préchargement
                 self.prefetch_times += total_prefetch_time
                 self.hits_in_hdd_b1_b2 += 1
-
+                self.migrated_blocks_count += 1
             elif args not in self.t1 and args not in self.b1 and args not in self.t2 and args not in self.b2:
                 if len(self.t1) + len(self.b1) == self.c:
                     if len(self.t1) < self.c:
@@ -197,10 +174,10 @@ class Arc_block_Cache(Policy):
                             data_size_to_transfer = self.block_size
 
                             # Calculer le temps nécessaire pour lire le fichier depuis le HDD
-                            ssd_read_time = data_size_to_transfer / self.ssd_tier.read_throughput
+                            ssd_read_time = data_size_to_transfer / self.ssd_tier.read_throughput + self.ssd_tier.latency
 
                             # Calculer le temps nécessaire pour écrire le fichier sur le SSD
-                            hdd_write_time = data_size_to_transfer / self.hdd_tier.write_throughput
+                            hdd_write_time = data_size_to_transfer / self.hdd_tier.write_throughput + self.hdd_tier.latency
 
                             # Si les opérations de lecture et d'écriture sont en parallèle,
                             # prendre le maximum des deux temps
@@ -219,14 +196,14 @@ class Arc_block_Cache(Policy):
                             self.b2.pop()
                         self.replace(args)
 
-
                 if self.hdd_tier.is_block_in_file(*args):
+                    self.migrated_blocks_count += 1
                     self.hdd_tier.remove_block(*args)
                     self.ssd_tier.add_block(*args)
                     self.t1.appendleft(args)
                     #self.hdd_time += (self.block_size / self.hdd_tier.read_throughput)
-                    hdd_read_time = (self.block_size / self.hdd_tier.read_throughput)
-                    ssd_write_time = (self.block_size / self.ssd_tier.write_throughput)
+                    hdd_read_time = (self.block_size / self.hdd_tier.read_throughput) + self.hdd_tier.latency
+                    ssd_write_time = (self.block_size / self.ssd_tier.write_throughput) + self.ssd_tier.latency
                     # Calculer le temps nécessaire pour écrire le fichier sur le SSD
 
                     # Si les opérations de lecture et d'écriture sont en parallèle,
@@ -234,7 +211,7 @@ class Arc_block_Cache(Policy):
                     max_transfer_time = max(hdd_read_time, ssd_write_time)
 
                     # Additionner le temps de transfert maximum et les latences des deux tiers
-                    total_prefetch_time = (max_transfer_time )
+                    total_prefetch_time = max_transfer_time
 
                     # Mettre à jour le temps total de préchargement
                     self.prefetch_times += total_prefetch_time
@@ -247,12 +224,13 @@ class Arc_block_Cache(Policy):
                     else:
                         self.t1.appendleft(args)
                         self.ssd_tier.add_block(*args)
-
                         self.ssd_time += (self.block_size / self.ssd_tier.write_throughput) + self.ssd_tier.latency
         self.total_time = self.ssd_time + self.hdd_time + self.prefetch_times + self.migration_times
         print('nbr hit arc block %s', self.hits)
         print('nbr miss arc block %s', self.misses)
-        #print('nombre de blocks evincés ', self.evicted_blocks_count)
+        print('nombre de blocks évincés ', self.evicted_blocks_count)
+        print('nombre de blocks migré ', self.migrated_blocks_count)
+
         print('taille du cache  %s', self.c)
         print('la taille de t1 et t2 :', len(self.t1) + len(self.t2))
         print('la taille de b1 et b2 :', len(self.b1) + len(self.b2))
