@@ -42,7 +42,9 @@ class Idle_Time_BFH_ARC(Policy):
         self.ssd_time_evict = 0
         self.hdd_time_evict = 0
         self.ssd_time_pref = 0
-
+    # fonction evict (Replace dans ARC) 
+    ''' Sélectionner les fichiers à évoncés 
+        et les placer dans une file d'attente (eviction_queue).'''
     def evict(self):
         if self.t1 and len(self.t1) > self.p:
             self.alpha = 0
@@ -76,7 +78,8 @@ class Idle_Time_BFH_ARC(Policy):
         #worse_file.is_eviction_pending = True
         # Ajout du worse_file à la file d'attente d'éviction
         self.eviction_queue.append(worse_file)
-
+        
+    # La fonction qui permet d'évincer les fichiers déjà placés dans la file d'attente (eviction_queue).
     def actual_evict(self):
         self.ssd_time_evict = 0
         self.hdd_time_evict = 0
@@ -193,10 +196,13 @@ class Idle_Time_BFH_ARC(Policy):
 
                     # We add the block to t1's list
                     tier[block] = None
+
+    # fonction qui permet de déplacer les fichiers qui sont déjà évincés de T1/T2 et dont les indices se trouvent dans B1/B2 vers la liste T2
     def move_file_to(self, file, tier):
         self.remove_all_hard(file)
         self.load_file_to(file, tier)
 
+    # la fonction intercepte les entrées/sorties pour les traiter
     def on_io(self, file, timestamp, requestType, offsetStart, offsetEnd):
         self.total_time = 0
         self.hdd_time_pref = 0
