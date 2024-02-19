@@ -57,6 +57,7 @@ class FG_ARC(Policy):
     def b2_max_size(self) -> int:
         return self.p
 
+    # fonction evict (Replace dans ARC) :
     def evict(self):
 
         file_to_evict = None
@@ -164,7 +165,8 @@ class FG_ARC(Policy):
                 del self.b2[block]
         del self.file2blocks[file]
         self.file2tier[file] = 0
-
+        
+    # Fobction pour charger un fichier dans T1 / T2
     def load_file_to(self, file, tier):
 
         if file.size <= (self.c - (len(self.t1) + len(self.t2))):
@@ -261,10 +263,12 @@ class FG_ARC(Policy):
                 # We add the block to t1's list
                 tier[block] = None
 
+    # fonction qui permet de déplacer les fichiers qui sont déjà évincés de T1/T2 et dont les indices se trouvent dans B1/B2 vers la liste T2.
     def move_file_to(self, file, tier):
         self.remove_all_hard(file)
         self.load_file_to(file, tier)
-
+        
+    # la fonction intercepte les entrées/sorties pour les traiter
     def on_io(self, file, timestamp, requestType, offsetStart, offsetEnd):
         #io_blocks = {(file, offsetStart + i) for i in range(offsetEnd - offsetStart)}
         self.total_time = 0
@@ -385,7 +389,4 @@ class FG_ARC(Policy):
         self.total_time += self.ssd_time + self.hdd_time + self.migration_times + self.prefetch_times
         print('nbr hit v1 %s', self.hits)
         print('nbr miss v1 %s', self.misses)
-        #print('la taille de t1 et t2 :',len(self.t1) + len(self.t2))
-        #print('la taille de b1 et b2 :',len(self.b1) + len(self.b2))
-        #print('nombre de fichiers evincés',self.evicted_file_count)
-        #print('nombre de blocks evincés ', self.evicted_blocks_count)
+        
