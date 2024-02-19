@@ -177,6 +177,7 @@ class Idle_Time_BFH_ARC(Policy):
         del self.file2blocks[file]
         self.file2tier[file] = 0
 
+    # Fobction pour charger un fichier dans T1 / T2
     def load_file_to(self, file, tier):
         if file.size > self.c:
             self.hdd_tier.add_file(file)
