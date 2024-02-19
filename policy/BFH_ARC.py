@@ -59,7 +59,7 @@ class BFH_ARC(Policy):
 
     def b2_max_size(self) -> int:
         return self.p
-
+# fonction evict (Replace dans ARC) : 
     def evict(self):
         # Ajustement d'alpha basé sur p.
         if self.t1 and len(self.t1) > self.p:
@@ -82,7 +82,7 @@ class BFH_ARC(Policy):
             file, offset = block
             self.adapte_B2 += 1
             file2score[file] += i * self.alpha
-
+        #calcule du score : 
         file2score = {file: (score / file.size) for file, score in file2score.items()}
 
         if not file2score:
@@ -166,8 +166,6 @@ class BFH_ARC(Policy):
         """
         Remove all blocks of a file that are in t1 or t2, and add them to b1 and b2, respectively
         """
-        # logging.debug(f'File {file} marked for unload. State before unload:')
-        # logging.debug(self)
         blocks_t1 = [block for block in self.t1 if block[0] == file]
         blocks_t2 = [block for block in self.t2 if block[0] == file]
         for block in blocks_t1:
@@ -185,8 +183,6 @@ class BFH_ARC(Policy):
         """
         Remove all blocks of a file from t1, t2, b1 or b2
         """
-        # logging.debug(f'File {file} marked for unload. State before unload:')
-        # logging.debug(self)
         blocks = self.file2blocks[file]
         for block in blocks:
             if block in self.t1.keys():
@@ -199,7 +195,7 @@ class BFH_ARC(Policy):
                 del self.b2[block]
         del self.file2blocks[file]
         self.file2tier[file] = 0
-
+    # Fobction pour charger un fichier dans T1 / T2
     def load_file_to(self, file, tier):
         if file.size > self.c:
             self.hdd_tier.add_file(file)
@@ -229,11 +225,16 @@ class BFH_ARC(Policy):
 
                 # We add the block to t1's list
                 tier[block] = None
-
+                
+    # fonction qui permet de déplacer les fichiers qui sont déjà évincés de T1/T2 et dont les indices se trouvent dans B1/B2 vers la liste T2.
     def move_file_to(self, file, tier):
+        ''' 1: Supprimer dans B1/ B1 
+            2: Charger le fichier dans T2
+        '''
         self.remove_all_hard(file)
         self.load_file_to(file, tier)
-
+        
+    # la fonction intercepte les entrées/sorties pour les traiter
     def on_io(self, file, timestamp, requestType, offsetStart, offsetEnd):
         self.ssd_time = 0
         self.hdd_time = 0
