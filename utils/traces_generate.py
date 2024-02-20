@@ -15,6 +15,7 @@ def generate_io_trace(num_files, num_operations, block_size, seq_percent, output
     millis_counter = 0  # Compteur simulant les millisecondes
 
     with open(output_file_io, 'w') as io_f, open(output_file_meta, 'w') as meta_f:
+        io_f.write("timestamp,requestType,filename,offsetStart,offsetEnd\n")  # En-tête du fichier d'I/O
         for _ in range(num_operations):
             millis_counter += 1
             file_id = f"File_{random.randint(1, num_files)}"
@@ -36,9 +37,8 @@ def generate_io_trace(num_files, num_operations, block_size, seq_percent, output
             end_offset = generate_sequential_ops(start_offset, size, block_size, is_sequential)
             total_addressable_space += end_offset - start_offset
 
-            io_f.write(f"{millis_counter}, {file_id}, {operation}, {start_offset}, {end_offset}\n")
+            io_f.write(f"{millis_counter},{operation},{file_id},{start_offset},{end_offset}\n")
 
-        # Calcul et écriture de lifetime basé sur l'accès aux fichiers
         for file_id, metadata in file_metadata.items():
             lifetime = metadata['lastAccessTime'] - metadata['firstAccessTime']
             meta_f.write(f"{file_id},{metadata['size']},{metadata['firstAccessTime']},{metadata['lastAccessTime']},{lifetime}\n")
@@ -51,9 +51,9 @@ def generate_io_trace(num_files, num_operations, block_size, seq_percent, output
 
 num_files = 100
 num_operations = 1000
-block_size = 1024 * 1024  # Blocs de 1 Mo pour simuler les accès en HPC
+block_size = 1024   # Blocs de 1 ko pour simuler les accès en HPC
 seq_percent = 90  # 90% de probabilité pour les accès séquentiels
-output_file_io = "io_trace_hpc.txt"
-output_file_meta = "file_metadata_hpc.txt"
+output_file_io = "io_trace_hpc.csv"
+output_file_meta = "file_metadata_hpc.csv"
 
 generate_io_trace(num_files, num_operations, block_size, seq_percent, output_file_io, output_file_meta)
