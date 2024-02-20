@@ -46,6 +46,7 @@ class RLT_ARC(Policy):
         self.ssd_time_pref = 0
         self.files_to_evict_immediately = set()
 
+    # fonction evict (Replace dans ARC) : 
     def evict(self):
         self.files_to_evict_immediately = set()
         if self.t1 and len(self.t1) > self.p:
@@ -98,7 +99,9 @@ class RLT_ARC(Policy):
 
             self.eviction_queue.append(worse_file)
 
-
+   # fonction evict (Replace dans ARC) 
+    ''' Sélectionner les fichiers à évoncés 
+        et les placer dans une file d'attente (eviction_queue).'''
     def actual_evict(self):
         self.ssd_time_evict = 0
         self.hdd_time_evict = 0
@@ -195,6 +198,8 @@ class RLT_ARC(Policy):
                 del self.b2[block]
         del self.file2blocks[file]
         self.file2tier[file] = 0
+
+    # Fobction pour charger un fichier dans T1 / T2
     def load_file_to(self, file, tier):
 
         if file.size > self.c:
@@ -218,10 +223,12 @@ class RLT_ARC(Policy):
                 # We add the block to t1's list
                 tier[block] = None
 
+    # fonction qui permet de déplacer les fichiers qui sont déjà évincés de T1/T2 et dont les indices se trouvent dans B1/B2 vers la liste T2
     def move_file_to(self, file, tier):
         self.remove_all_hard(file)
         self.load_file_to(file, tier)
-
+        
+    # la fonction intercepte les entrées/sorties pour les traiter
     def on_io(self, file, timestamp, requestType, offsetStart, offsetEnd):
         self.total_time = 0
         self.ssd_time_pref = 0
