@@ -1,8 +1,11 @@
+# Importation des modules nécessaires
 import datetime
-from structures.io import IORequest
-from collections import deque
-from structures.tier import Tier
-from structures.file import File
+from structures.io import IORequest  # Classe personnalisée pour représenter une demande d'IO
+from collections import deque # Utilisé pour la file d'attente des demandes d'IO
+from structures.tier import Tier # Classe personnalisée pour représenter un niveau de stockage (SSD ou HDD)
+from structures.file import File # Classe personnalisée pour représenter un fichier
+
+# Importation des différentes politiques de placement / cache
 from policy.Idle_Time_BFH_ARC import Idle_Time_BFH_ARC
 from policy.arcblock import Arc_block_Cache
 from policy.FG_ARC import FG_ARC
@@ -10,20 +13,30 @@ from policy.FG_ARC import FG_ARC
 from policy.BFH_ARC import BFH_ARC
 from policy.RLT_ARC import RLT_ARC
 from policy.arcfilewithlifetime import ARC_File_Policyv2lifetime
-import math
+import math # Pour les opérations mathématiques
 
 
+# Fonction pour traiter une demande d'IO
 def process_io_request_with_queue(io_request, previous_end_time, policy, policy_hits_data, policy_misses_data,policy_evicted_fils_data,
                                   policy_evicted_blocks_data, policy_time_migration, policy_total_times, policy_prefetch_times, policy_read_times, policy_write_times):
     """ Traite une demande IO """
+    """
+    Cette fonction traite une demande d'IO en calculant le temps de début d'exécution,
+    en déterminant les blocs concernés et en mettant à jour les statistiques de la politique de cache utilisée.
+    """
+
+    # Calcul du temps de début d'exécution de la demande                       
     io_request.execution_start_time = max(io_request.timestamp, previous_end_time)
 
+    # Calcul des blocs de début et de fin concernés par la demande d'IO
     offset_block = math.floor(io_request.offsetStart / block_size)
     end_block = math.ceil(io_request.offsetEnd / block_size) 
     #size_block = end_block - offset_block
 
+    # Appel de la fonction de la politique de placement pour traiter l'IO
     policy.on_io(io_request.file, io_request.timestamp, io_request.requestType, offset_block, end_block)
 
+    # Mise à jour des statistiques de la politique de cache
     policy_hits_data.append(policy.hits)
     policy_misses_data.append(policy.misses)
     policy_evicted_fils_data.append(policy.evicted_file_count)
@@ -33,6 +46,8 @@ def process_io_request_with_queue(io_request, previous_end_time, policy, policy_
     policy_prefetch_times.append(policy.prefetch_times)
     policy_read_times.append(policy.read_times)
     policy_write_times.append(policy.write_times)
+
+    # Calcul et retour du temps de fin d'exécution de la demande                                
     io_request.execution_end_time = io_request.execution_start_time + policy.total_time
     return io_request.execution_end_time
 
@@ -59,11 +74,18 @@ def process_io_request_with_queue1(io_request, previous_end_time, policy, policy
     return io_request.execution_end_time, io_request
 
 
+# Fonction pour simuler le traitement des demandes d'IO en utilisant une file d'attente et une politique de placement \ cache 
 def simulate_policy_with_queue1(policy, ios, policy_hits_data, policy_misses_data,policy_evicted_fils_data, policy_evicted_blocks_data, policy_time_migration, policy_total_times, policy_prefetch_times, policy_read_times, policy_write_times):
-    io_queue = deque()
-    previous_end_time = 0
-    processed_io_requests = []
+    """
+    Cette fonction simule le traitement d'une liste de demandes d'IO en utilisant une file d'attente.
+    Elle traite chaque demande séquentiellement et met à jour les statistiques globales.
+    """
+    
+    io_queue = deque()  # Initialisation de la file d'attente des demandes d'IO
+    previous_end_time = 0  # Temps de fin de la dernière demande traitée
+    processed_io_requests = [] # Liste pour stocker les demandes traitées
 
+    # Parcours et traitement de chaque demande d'IO
     for file, timestamp, requestType, offsetStart, offsetEnd in ios:
         io_request = IORequest(file, timestamp, requestType, offsetStart, offsetEnd)
         io_request.execution_start_time = max(io_request.timestamp, previous_end_time)
@@ -75,6 +97,7 @@ def simulate_policy_with_queue1(policy, ios, policy_hits_data, policy_misses_dat
         else:
             io_queue.append(io_request)
 
+    # Traitement des demandes restantes dans la file d'attente
     while io_queue:
         current_io = io_queue.popleft()
         waiting_time = current_io.waiting_time
@@ -142,7 +165,12 @@ def simulate_policy_with_queue31(policy, ios,
     return total_hits, total_misses, total_times, migration_times, prefetch_times, read_times, write_times, fils_migration, evicted_blocks_count
 
 
+# Fonction pour écrire un résumé des résultats de la simulation dans un fichier
 def write_summary_to_file(log_filename, metadata_filename, cache_size_p, hits, misses, total_execution_time, total_eviction_time, total_prefetch_time, total_read_time, total_write_time, total_fils_migrated,total_blocks_migrated, IO_count):
+    """
+    Cette fonction écrit un résumé des résultats de la simulation dans un fichier texte,
+    incluant les statistiques globales telles que les hits, les misses, etc 
+    """
     with open(log_filename, 'w') as file:
         file.write(f"Metadata File: {metadata_filename}\n")
         file.write(f"Cache Size: {cache_size_p}\n")
