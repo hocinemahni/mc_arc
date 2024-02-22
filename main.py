@@ -17,7 +17,7 @@ import math # Pour les opérations mathématiques
 
 
 # Fonction pour traiter une demande d'IO
-def process_io_request_with_queue(io_request, previous_end_time, policy, policy_hits_data, policy_misses_data,policy_evicted_fils_data,
+def process_io_request_with_queue_with_idle(io_request, previous_end_time, policy, policy_hits_data, policy_misses_data,policy_evicted_fils_data,
                                   policy_evicted_blocks_data, policy_time_migration, policy_total_times, policy_prefetch_times, policy_read_times, policy_write_times):
     """ Traite une demande IO """
     """
@@ -108,7 +108,7 @@ def simulate_policy_with_queue1(policy, ios, policy_hits_data, policy_misses_dat
     return processed_io_requests
 
 
-def simulate_policy_with_queue31(policy, ios,
+def simulate_policy_with_queue_with_idle(policy, ios,
                                  policy_hits_data, policy_misses_data,policy_evicted_fils_data,
                                  policy_evicted_blocks_data, policy_time_migration,
                                  policy_total_times, policy_prefetch_times, policy_read_times, policy_write_times ):
@@ -127,7 +127,7 @@ def simulate_policy_with_queue31(policy, ios,
         io_request = IORequest(file, timestamp, requestType, offsetStart, offsetEnd)
         io_request.execution_start_time = max(io_request.timestamp, previous_end_time)
         if not io_queue or io_request.execution_start_time > previous_end_time:
-            previous_end_time = process_io_request_with_queue(
+            previous_end_time = process_io_request_with_queue_with_idle(
                 io_request, previous_end_time, policy,
                 policy_hits_data, policy_misses_data,policy_evicted_fils_data,
                 policy_evicted_blocks_data, policy_time_migration,
@@ -146,7 +146,7 @@ def simulate_policy_with_queue31(policy, ios,
         current_io = io_queue.pop(0)
         current_io.execution_start_time = max(current_io.timestamp, previous_end_time)
         waiting_time = current_io.waiting_time
-        previous_end_time = process_io_request_with_queue(
+        previous_end_time = process_io_request_with_queue_with_idle(
             current_io, previous_end_time, policy,
             policy_hits_data, policy_misses_data,policy_evicted_fils_data,
             policy_evicted_blocks_data, policy_time_migration,
@@ -259,7 +259,7 @@ if __name__ == "__main__":
         FG_ARC_policy = FG_ARC(cache_size_p, alpha, ssd_tier, hdd_tier)
         arc_block_policy = Arc_block_Cache(cache_size_p, alpha, ssd_tier, hdd_tier)
         Idle_Time_BFH_ARC = Idle_Time_BFH_ARC(cache_size_p, alpha, ssd_tier, hdd_tier)
-        '''total_hits, total_misses, total_execution_time, migration_times, prefetch_time, read_time, write_time, evicted_files, evicted_blocks= simulate_policy_with_queue31(arc_file_policy2_evict, ios, hits_data1, misses_data1,evicted_files_data1,
+        '''total_hits, total_misses, total_execution_time, migration_times, prefetch_time, read_time, write_time, evicted_files, evicted_blocks= simulate_policy_with_queue_with_idle(arc_file_policy2_evict, ios, hits_data1, misses_data1,evicted_files_data1,
                                                         evicted_blocks_data1, migration_time1, total_times, prefetch_times, read_times, write_times)
         print(f'total_hits {total_hits}')
         print(f' total_miss {total_misses}')
