@@ -1,8 +1,7 @@
 
 ## Multi-Tier Storage System Simulation Project
 # Overview: 
-    This project focuses on simulating a multi-tier storage system, 
-    with an emphasis on data management through the implementation of various placement policies. 
+    This project focuses on simulating a multi-tier storage system, with an emphasis on data management through the implementation of various placement policies. 
     The goal is to explore how different strategies can affect the performance of the storage system.
 
 # The policies implemented are: 
