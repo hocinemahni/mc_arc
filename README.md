@@ -32,14 +32,14 @@
 
   ## Method 1: Running Locally (Without Docker)
     1. Clone the project from the git repository :
-       ```bash
-       git clone https://github.com/hocinemahni/Arc_file_simu.git
-       cd Arc_file_simu
-       ```
+       '''
+          git clone https://github.com/hocinemahni/Arc_file_simu.git
+          cd Arc_file_simu
+       '''
     2. Install the requirements
-        ```bash
-        pip install -r requirements.txt
-        ```
+        '''bash
+           pip install -r requirements.txt
+        '''
     3. configure ssd_tier and hdd_tier in the main.py file
     4. configure the cache_size_proportions in the main.py file
     5. configure path to the metadata in the main.py file
