@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  arc_file_simu:
+    build: .
+    container_name: arc_file_simu
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: python main.py
