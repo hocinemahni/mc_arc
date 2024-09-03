@@ -30,57 +30,57 @@
   # Usage:  
   You can run this project using two methods:
 
-        ## Method 1: Running Locally (Without Docker)
-            1. Clone the project from the git repository :
-               ```bash
-               git clone https://github.com/hocinemahni/Arc_file_simu.git
-               cd Arc_file_simu
-               ```
-            2. Install the requirements
-                ```bash
-                pip install -r requirements.txt
-                ```
-            3. configure ssd_tier and hdd_tier in the main.py file
-            4. configure the cache_size_proportions in the main.py file
-            5. configure path to the metadata in the main.py file
-            6. configure path to the data file in the main.py file 
-            7. Run the main.py file with the command below
-               ```bash
-                  python main.py
-               ```
-            8. The results will be saved in the graphes folder
+  ## Method 1: Running Locally (Without Docker)
+    1. Clone the project from the git repository :
+       ```bash
+       git clone https://github.com/hocinemahni/Arc_file_simu.git
+       cd Arc_file_simu
+       ```
+    2. Install the requirements
+        ```bash
+        pip install -r requirements.txt
+        ```
+    3. configure ssd_tier and hdd_tier in the main.py file
+    4. configure the cache_size_proportions in the main.py file
+    5. configure path to the metadata in the main.py file
+    6. configure path to the data file in the main.py file 
+    7. Run the main.py file with the command below
+       ```bash
+          python main.py
+       ```
+    8. The results will be saved in the graphes folder
             
-        ## Method 2: Running with Docker
-           ![Docker Setup](utils/Docker.png)
-           If you prefer to run the project in a Docker container, follow these steps:
+  ## Method 2: Running with Docker
+       ![Docker Setup](utils/Docker.png)
+       If you prefer to run the project in a Docker container, follow these steps:
 
-              1. Ensure Docker and Docker Compose are installed:
+          1. Ensure Docker and Docker Compose are installed:
 
-                 - Download Docker from [Docker's official website](https://www.docker.com/products/docker-desktop).
-                 - Docker Compose usually comes with Docker Desktop, but you can check installation instructions [here](https://docs.docker.com/compose/install/).
+             - Download Docker from [Docker's official website](https://www.docker.com/products/docker-desktop).
+             - Docker Compose usually comes with Docker Desktop, but you can check installation instructions [here](https://docs.docker.com/compose/install/).
 
-              2. Build the Docker image:
+          2. Build the Docker image:
 
-                  Open a terminal in the root of your project and run:
+              Open a terminal in the root of your project and run:
 
-                      ```bash
-                      docker-compose build
-                      ```
+                  ```bash
+                  docker-compose build
+                  ```
 
-              3. Run the Docker container:
+          3. Run the Docker container:
 
-                  Once the image is built, start the container with:
+              Once the image is built, start the container with:
 
-                     ```bash
-                     docker-compose up
-                     ```
+                 ```bash
+                 docker-compose up
+                 ```
 
-              4. Stop the Docker container:
+          4. Stop the Docker container:
 
-                  If you need to stop the application, use:
+              If you need to stop the application, use:
 
-                      ```bash
+                  ```bash
                       docker-compose down
                        ```
 
-        **Note:** The current directory is mounted inside the container, which allows you to see changes without needing to rebuild the Docker image.
+**Note:** The current directory is mounted inside the container, which allows you to see changes without needing to rebuild the Docker image.
