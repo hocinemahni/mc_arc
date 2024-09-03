@@ -37,7 +37,7 @@
           cd Arc_file_simu
        '''
     2. Install the requirements
-        '''bash
+        '''
            pip install -r requirements.txt
         '''
     3. configure ssd_tier and hdd_tier in the main.py file
@@ -45,9 +45,9 @@
     5. configure path to the metadata in the main.py file
     6. configure path to the data file in the main.py file 
     7. Run the main.py file with the command below
-       ```bash
+       '''
           python main.py
-       ```
+       '''
     8. The results will be saved in the graphes folder
             
   ## Method 2: Running with Docker
@@ -64,24 +64,24 @@
 
               Open a terminal in the root of your project and run:
 
-                  ```bash
-                  docker-compose build
-                  ```
+                  '''
+                     docker-compose build
+                  '''
 
           3. Run the Docker container:
 
               Once the image is built, start the container with:
 
-                 ```bash
-                 docker-compose up
-                 ```
+                 '''
+                    docker-compose up
+                 '''
 
           4. Stop the Docker container:
 
               If you need to stop the application, use:
 
-                  ```bash
+                  '''
                       docker-compose down
-                       ```
+                  '''
 
 **Note:** The current directory is mounted inside the container, which allows you to see changes without needing to rebuild the Docker image.
