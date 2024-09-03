@@ -51,7 +51,7 @@
     8. The results will be saved in the graphes folder
             
   ## Method 2: Running with Docker
-       ![Docker](https://github.com/user-attachments/assets/933c0311-b8ed-465b-914c-51d12f10d814)
+       ![Docker](utils/Docker.png)
 
        If you prefer to run the project in a Docker container, follow these steps:
 
