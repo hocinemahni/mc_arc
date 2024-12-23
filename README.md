@@ -29,7 +29,7 @@
   ## Method 1: Running Locally (Without Docker)
     1. Clone the project from the git repository :
        '''
-          git clone https://github.com/hocinemahni/Arc_file_simu.git
+          git clone https://github.com/hocinemahni/mc_arc.git
           cd Arc_file_simu
        '''
     2. Install the requirements
