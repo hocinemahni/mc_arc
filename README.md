@@ -6,14 +6,7 @@
 # Features
 Two-Tier Storage Modeling: Simulates a high-performance SSD tier and a lower-performance HDD tier with configurable characteristics.
 
-# Eviction Policies:
 
-## Block-Based Policies:
-   Least Recently Used (LRU)
-   Least Frequently Used (LFU)
-   Adaptive Replacement Cache (ARC)
-## File-Based Policy:
-   Multicriteria ARC (MC-ARC)
 
 # Multi-Criteria Decision Making:
 
@@ -34,10 +27,13 @@ Throughput per User
 Supports workloads derived from real HPC applications, including Yombo, Synthesized Google I/O Traces, and IBMObjectStoreTrace
 
 # The policies implemented are: 
-        ARC, 
-        LRU,
-        LFU,
-        MC-ARC
+
+#### Block-Based Policies:
+   Least Recently Used (LRU),
+   Least Frequently Used (LFU),
+   Adaptive Replacement Cache (ARC)
+#### File-Based Policy:
+   Multicriteria ARC (MC-ARC)
                
     
 # Requirements:   
