@@ -29,11 +29,11 @@ Supports workloads derived from real HPC applications, including Yombo, Synthesi
 # The policies implemented are: 
 
 #### Block-Based Policies:
-   Least Recently Used (LRU),
-   Least Frequently Used (LFU),
-   Adaptive Replacement Cache (ARC)
+        Least Recently Used (LRU),
+        Least Frequently Used (LFU),
+        Adaptive Replacement Cache (ARC)
 #### File-Based Policy:
-   Multicriteria ARC (MC-ARC)
+        Multicriteria ARC (MC-ARC)
                
     
 # Requirements:   
