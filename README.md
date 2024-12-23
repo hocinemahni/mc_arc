@@ -6,13 +6,9 @@
 
 # The policies implemented are: 
         ARC, 
-        CFS-ARC, 
-        FG-ARC, 
-        BFH_ARC_alpa_beta, 
-        BFH_ARC_whithout_alpha_beta, 
-        BFH_ARC_whith_size, 
-        RLT_ARC, 
-        Idle_Time_BFH_ARC_policy    
+        LRU,
+        LFU,
+        MC-ARC
                
     
 # Requirements:   
