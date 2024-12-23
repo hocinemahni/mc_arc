@@ -4,7 +4,7 @@ from structures.file import File
 from policy.policy import Policy
 import datetime
 
-class LRU_block_bb(Policy):
+class LRU_block(Policy):
     """
     LRU_block_bb is a caching policy that manages blocks between SSD and HDD tiers
     using the Least Recently Used (LRU) algorithm. It incorporates a burst buffer
