@@ -1,8 +1,37 @@
 
 ## Multi-Tier Storage System Simulation Project
 # Overview: 
-    This project focuses on simulating a multi-tier storage system, with an emphasis on data management through the implementation of various placement policies. 
-    The goal is to explore how different strategies can affect the performance of the storage system.
+   The HPC Multi-Tier Storage Simulator is a Python-based simulation tool designed to evaluate and compare various cache eviction policies within multi-tier High-Performance Computing (HPC) storage systems. The simulator models heterogeneous storage architectures, specifically focusing on Solid-State Drives (SSDs) and Hard Disk Drives (HDDs), to analyze the performance and efficiency of different data placement and eviction strategies
+
+# Features
+Two-Tier Storage Modeling: Simulates a high-performance SSD tier and a lower-performance HDD tier with configurable characteristics.
+
+# Eviction Policies:
+
+## Block-Based Policies:
+   Least Recently Used (LRU)
+   Least Frequently Used (LFU)
+   Adaptive Replacement Cache (ARC)
+## File-Based Policy:
+   Multicriteria ARC (MC-ARC)
+
+# Multi-Criteria Decision Making:
+
+   Implements Weighted Sum Model (WSM) and Technique for Order Preference by Similarity to Ideal Solution (TOPSIS) for aggregating multiple eviction criteria in MC-ARC.
+# File Lifetime Prediction:
+
+   Integrates file lifetime predictions using Convolutional Neural Networks (CNNs) to inform eviction decisions.
+# User Fairness:
+
+   Ensures equitable allocation of high-performance tier resources among multiple users.
+## Comprehensive Metrics:
+
+I/O Processing Time
+Hit Ratio
+Throughput per User
+## Realistic Workload Support:
+
+Supports workloads derived from real HPC applications, including Yombo, Synthesized Google I/O Traces, and IBMObjectStoreTrace
 
 # The policies implemented are: 
         ARC, 
