@@ -3,8 +3,6 @@
 # Overview: 
    The HPC Multi-Tier Storage Simulator is a Python-based simulation tool designed to evaluate and compare various cache eviction policies within multi-tier High-Performance Computing (HPC) storage systems. The simulator models heterogeneous storage architectures, specifically focusing on Solid-State Drives (SSDs) and Hard Disk Drives (HDDs), to analyze the performance and efficiency of different data placement and eviction strategies
 
-##### Features
-        Two-Tier Storage Modeling: Simulates a high-performance SSD tier and a lower-performance HDD tier with configurable characteristics.
 
 
 # The policies implemented are: 
