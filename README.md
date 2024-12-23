@@ -28,22 +28,22 @@
 
   ## Method 1: Running Locally (Without Docker)
     1. Clone the project from the git repository :
-       '''
+       """
           git clone https://github.com/hocinemahni/mc_arc.git
           cd mc_arc
-       '''
+       """
     2. Install the requirements
-        '''
+        """
            pip install -r requirements.txt
-        '''
+        """
     3. configure ssd_tier and hdd_tier in the main.py file
     4. configure the cache_size_proportions in the main.py file
     5. configure path to the metadata in the main.py file
     6. configure path to the data file in the main.py file 
     7. Run the main.py file with the command below
-       '''
+       """
           python main.py
-       '''
+       """
     8. The results will be saved in the graphes folder
             
   ## Method 2: Running with Docker
@@ -60,24 +60,24 @@
 
               Open a terminal in the root of your project and run:
 
-                  '''
+                  """
                      docker-compose build
-                  '''
+                  """
 
           3. Run the Docker container:
 
               Once the image is built, start the container with:
 
-                 '''
+                 """
                     docker-compose up
-                 '''
+                 """
 
           4. Stop the Docker container:
 
               If you need to stop the application, use:
 
-                  '''
+                  """
                       docker-compose down
-                  '''
+                  """
 
 **Note:** The current directory is mounted inside the container, which allows you to see changes without needing to rebuild the Docker image.
