@@ -6,7 +6,7 @@ import datetime
 import heapq
 import itertools
 
-class LFU_bb_l(Policy):
+class LFU(Policy):
     """
     LFU is a caching policy that evicts the least frequently used block when the cache is full.
     """
