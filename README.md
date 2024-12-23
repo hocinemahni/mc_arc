@@ -21,7 +21,7 @@
         pip install pandas
         pip install matplotlib
         pip install numpy
-        Download the project: Arc_file_simu
+        Download the project: mc_arc
  
   # Usage:  
   You can run this project using two methods:
@@ -30,7 +30,7 @@
     1. Clone the project from the git repository :
        '''
           git clone https://github.com/hocinemahni/mc_arc.git
-          cd Arc_file_simu
+          cd mc_arc
        '''
     2. Install the requirements
         '''
