@@ -88,7 +88,7 @@
                       docker-compose down
                   """
 
-**Note:** The current directory is mounted inside the container, which allows you to see changes without needing to rebuild the Docker image.
+---------------------------------------------------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------------------------------------------------------
 “We are therefore forced to recognize the possibility of constructing a hierarchy of memories,
 each of which has greater capacity than the preceding but which is less quickly accessible.”
