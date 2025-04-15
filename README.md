@@ -12,7 +12,7 @@
         Least Frequently Used (LFU),
         Adaptive Replacement Cache (ARC)
 #### File-Based Policy:
-        Multicriteria ARC (MC-ARC)
+        A Multicriteria File-Level Placement Policy for HPC Storage (MC-ARC)
                
 ## Comprehensive Metrics:
 
