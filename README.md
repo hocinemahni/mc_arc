@@ -87,7 +87,30 @@
                   """
                       docker-compose down
                   """
+---------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------
+## Citation
 
+If you use this simulator, **please cite the following article**:
+
+
+@inproceedings{10.1145/3672608.3707969,
+author    = {Mahni, Hocine and Rubini, St{\'e}phane and Gougeaud, S{\'e}bastien and Deniel, Philippe and Boukhobza, Jalil},
+title     = {Multicriteria File-Level Placement Policy for HPC Storage},
+booktitle = {Proceedings of the 40th ACM/SIGAPP Symposium on Applied Computing},
+series    = {SAC~'25},
+year      = {2025},
+pages     = {1399--1406},
+publisher = {Association for Computing Machinery},
+address   = {New York, NY, USA},
+isbn      = {9798400706295},
+doi       = {10.1145/3672608.3707969},
+url       = {https://doi-org.ins2i.bib.cnrs.fr/10.1145/3672608.3707969},
+abstract  = {The rapid expansion of data volumes across various scientific and technical fields, along with the development of exascale computing in the high performance computing (HPC) domain, continually challenge existing storage systems. These systems typically consist of heterogeneous multi-tier storage architectures, ranging from high-speed solid-state drives (SSDs) tier with limited storage capacity to slower magnetic tapes tier with larger storage capacity. A significant challenge in HPC storage systems is the effective placement and migration of data across different storage levels. Current strategies, such as those implemented in parallel file systems like Lustre, utilize hierarchical storage management (HSM) solutions such as the Robinhood Policy Engine, which operate at the file granularity level for data eviction policies. In contrast, traditional caching policies work at the block level. This mismatch of granularity makes it difficult to adopt traditional eviction policies to those HSM. This study introduces a new multi-criteria file-level eviction policy incorporating frequency and recency of access, file lifetime, and a fairness criterion. Our policy reduces I/O processing times by average of 30\% for tested workloads and improves the hit ratio by 56.43\% on average, outperforming block-based cache replacement policies such as LRU, LFU, and ARC.},
+keywords  = {data placement, multi-tier storage, high performance computing, ARC, HSM, storage cache, eviction policy},
+location  = {Catania International Airport, Catania, Italy},
+numpages  = {8}
+}
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------------------------------------------------------
 “We are therefore forced to recognize the possibility of constructing a hierarchy of memories,
