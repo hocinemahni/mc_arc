@@ -93,7 +93,7 @@
 
 If you use this simulator, **please cite the following article**:
 
-
+```bibtex
 @inproceedings{10.1145/3672608.3707969,
 author    = {Mahni, Hocine and Rubini, St{\'e}phane and Gougeaud, S{\'e}bastien and Deniel, Philippe and Boukhobza, Jalil},
 title     = {Multicriteria File-Level Placement Policy for HPC Storage},
